@@ -159,7 +159,6 @@ Initialized empty Git repository in C:/Users/HPE/Desktop/til/.git/
   
   ```
 
-  
 
 
 
@@ -173,9 +172,19 @@ Initialized empty Git repository in C:/Users/HPE/Desktop/til/.git/
 
 
 
+### 1. 원격 저장소에서 로컬 저장소로 프로젝트 가져오기
+
+```bash
+$ git clone github_url
+```
+
+- 원격 저장소에 만들어진 레파지토리를 `clone` 해온다.
+- 파일을 생성, 수정하고 `git add .` , `git commit -m " "`을 해준다.
+- 마지막으로 `git push`를 해주면 반영된다.
 
 
-### 1. 원격 저장소 설정하기
+
+### 2. 원격 저장소 설정하기
 
 
 
