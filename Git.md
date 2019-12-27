@@ -103,8 +103,8 @@ Initialized empty Git repository in C:/Users/HPE/Desktop/til/.git/
             images/
     
     ```
-
-
+    
+    
 
 
 
@@ -147,8 +147,19 @@ Initialized empty Git repository in C:/Users/HPE/Desktop/til/.git/
   
   
   ```
+  
+  
+  
+* `git commit -am "커밋메시지"` : `add`와 `commit` 을 한번에 하게 해준다.
 
+  ```bash
+  $ git commit -am "오타 수정"
+  [master 8c399dc] 오타 수정
+   1 file changed, 2 insertions(+), 1 deletion(-)
+  
+  ```
 
+  
 
 
 
@@ -197,4 +208,13 @@ $ git push origin master
 ```
 
 - `origin` 으로 설정된 url에 `master` 브랜치로 `push` 한다.
+
+
+
+## 3. git flow
+
+- `git init` 을 통해 최초에 저장소를 만듦
+- `git clone` 를 통해 만들어진 저장소를 가져옴 
+- `git push` 를 통해 업로드
+- `git pull` 을 통해 다운로드
 
