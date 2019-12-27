@@ -6,6 +6,10 @@
 
 
 
+
+
+
+
 ## 준비사항
 
 윈도우에서 git을 쓰기 위해서는 [git bash](https://gitforwindows.org/)을 설치한다. 
@@ -21,7 +25,13 @@ $ git config --global user.email midaslmg94@gmail.com
 
 
 
+
+
+
+
 ## 로컬 저장소 활용하기
+
+
 
 ### 1. `init`
 
@@ -34,6 +44,8 @@ Initialized empty Git repository in C:/Users/HPE/Desktop/til/.git/
 * git 저장소를 생성
 * git 저장소를 생성하면, 해당 디렉토리에 `.git` 폴더가 생성된다.
 * `(master)`는 현재 작업중인 브랜치가 master라는 의미를 가지고 있다.
+
+
 
 
 
@@ -94,6 +106,8 @@ Initialized empty Git repository in C:/Users/HPE/Desktop/til/.git/
 
 
 
+
+
 ### 3. `commit`
 
 * 이력을 남기기 위해서는 아래의 명령어를 활용한다.
@@ -114,6 +128,7 @@ Initialized empty Git repository in C:/Users/HPE/Desktop/til/.git/
   
   commit fd8e9514ac3ca863059c78bc46c149ef32ec297f (HEAD -> master)
   Author: mk <midaslmg94@gmail.com>
+  
   Date:   Fri Dec 27 14:19:34 2019 +0900
   
       Markdown 활용법 추가
@@ -133,5 +148,52 @@ Initialized empty Git repository in C:/Users/HPE/Desktop/til/.git/
   
   ```
 
-* 
 
+
+
+
+
+
+## 원격저장소(remote repository) 활용하기
+
+
+
+> 원격 저장소를 제공하는 서비스는`gitlab`, `github`, `bitbucket` 등 다양하나 `github`을 기준으로 설명한다.
+
+
+
+
+
+### 1. 원격 저장소 설정하기
+
+
+
+```bash
+$ git remote add origin github_url
+```
+
+- 원격저장소(`remote`)를 `origin`으로 `github_url`을 추가(`add`)한다.
+
+- 설정된 원격 저장소 목록을 확인하기 위해서는 아래의 명령어를 활용한다.
+
+  ```bash
+  $ git remote -v
+  origin  https://github.com/midaslmg94/TIL.git (fetch)
+  origin  https://github.com/midaslmg94/TIL.git (push)
+  ```
+
+- 설정된 원격 저장소를 삭제하기 위해서는 아래의 명령어를 활용한다.
+
+  ```bash
+  $ git remote rm origin
+  ```
+
+
+
+### 2.`push`
+
+```bash
+$ git push origin master
+```
+
+- `origin` 으로 설정된 url에 `master` 브랜치로 `push` 한다.
