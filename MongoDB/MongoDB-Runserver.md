@@ -155,8 +155,10 @@
     } :
     ```
   
-    - Secondary DB는 `slave`이고, `show dbs` 명령어를 실행할 권한이 없기 때문에 따로 부여를 해줘야 한다.
+    
 
+    - Secondary DB는 `slave`이고, `show dbs` 명령어를 실행할 권한이 없기 때문에 따로 부여를 해줘야 한다.
+    
       ```
       MongoDB Enterprise myapp:SECONDARY> rs.slaveOk()
       ```
@@ -164,10 +166,10 @@
 
 
 
-### 7. Primary 종료, 새로운 Primary 책정
+### 7. Replica & ReplicaSet : Primary 종료, 새로운 Primary 책정
 
 - Primary 서버(현재 node02, port : 27019)를 종료하면 `arbiter`에 의해 Secondary 서버들 중에서 새로운 Primary 서버가 책정된다.
-- 새롭게 책정된 Primary 서버는 기존 Primary 서버의 기능을 똑같이 수행한다.
+- 새롭게 책정된 Primary 서버는 기존 Primary 서버의 기능을 똑같이 수행한다. Primary와 Secondary의 데이터는 동일하므로 기능 수행에 지장이 없다.
 - 만일, 이전의 Primary 서버였던 node02를 새롭게 시동하면 node02는 Secondary로 들어간다. 
 
 
