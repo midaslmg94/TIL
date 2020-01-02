@@ -58,6 +58,18 @@
 
 # Docker-compose
 
+[참고자료](http://raccoonyy.github.io/docker-usages-for-dev-environment-setup/)
+
+- Docker-compose : 도커 애플리케이션을 정의하고 실행하는 도구
+
+  ![image-20200102164206919](images/image-20200102164206919.png)
+
+
+
+  ![image-20200102164242961](images/image-20200102164242961.png)
+
+
+
 - `docker-compose version` : docker compose 버전 확인
 
 - `docker run -d -p 9000:8080 busybox/echo:latest -v -e --name ` 이라고 해서 도커 컨테이너를 만들었었다. 하지만 이를 compose로도 생성 가능하다.
@@ -74,6 +86,7 @@
   ```
 
   - 실행방법 : `docker-compose up`
+  - inventation을 잘 맞춰줘야 한다.
 
 - 3개의 서버를 만든걸  compose 하나로 만들 수 있음
 
@@ -433,7 +446,83 @@ mongo1_1  | 2020-01-02T05:06:27.774+0000 I  STORAGE  [initandlisten] Timestamp m
      { "_id" : ObjectId("5e0d94904cf9f33be3693488"), "title" : "Docker-Mongo-03" }
      ```
 
-     
 
-   
+
+
+### Primary 종료 & 재실행
+
+- 현재 Primary인 mongo_mongo1_1을 종료해보자
+
+  ```bash
+  PS C:\Users\HPE\Work\docker\day03\mongo> docker stop 02013
+  # 02013은 1번의 CONTAINER ID
+  ```
+
+- Secondary였던 2번 서버 실행
+
+  ```bash
+  PS C:\Users\HPE\Work\docker\day03\mongo> docker exec -it mongo_mongo2_1 mongo
+  myapp:PRIMARY>
+  ```
+
+  - PRIMARY로 승격
+
+- 다시 1번 서버 실행
+
+  ```bash
+  PS C:\Users\HPE\Work\docker\day03\mongo> docker restart 02013
+  02013
+  PS C:\Users\HPE\Work\docker\day03\mongo> docker exec -it mongo_mongo1_1 mongo
+  ```
+
+  ```bash
+  myapp:SECONDARY> db.isMaster()
+  {
+          "hosts" : [
+                  "mongo1:27017",
+                  "mongo2:27017",
+                  "mongo3:27017"
+          ],
+          "setName" : "myapp",
+          "setVersion" : 1,
+          "ismaster" : false,
+          "secondary" : true,
+          "primary" : "mongo2:27017",
+          "me" : "mongo1:27017",
+          "lastWrite" : {
+                  "opTime" : {
+                          "ts" : Timestamp(1577951267, 1),
+                          "t" : NumberLong(2)
+                  },
+                  "lastWriteDate" : ISODate("2020-01-02T07:47:47Z"),
+                  "majorityOpTime" : {
+                          "ts" : Timestamp(1577951267, 1),
+                          "t" : NumberLong(2)
+                  },
+                  "majorityWriteDate" : ISODate("2020-01-02T07:47:47Z")
+          },
+          "maxBsonObjectSize" : 16777216,
+          "maxMessageSizeBytes" : 48000000,
+          "maxWriteBatchSize" : 100000,
+          "localTime" : ISODate("2020-01-02T07:47:55.684Z"),
+          "logicalSessionTimeoutMinutes" : 30,
+          "connectionId" : 12,
+          "minWireVersion" : 0,
+          "maxWireVersion" : 8,
+          "readOnly" : false,
+          "ok" : 1,
+          "$clusterTime" : {
+                  "clusterTime" : Timestamp(1577951267, 1),
+                  "signature" : {
+                          "hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),
+                          "keyId" : NumberLong(0)
+                  }
+          },
+          "operationTime" : Timestamp(1577951267, 1)
+  }
+  ```
+
+- 
+
+
 
