@@ -46,10 +46,31 @@
 
 
 
-## Docker 명령어
+### Docker 실행
 
+<<<<<<< HEAD
 - Dockerfile
   - FROM 인스트
+=======
+**`docker run -t -p 9000:8080 gihyodocker/echo:latest`** 
+
+- `gihyodocker/echo ` : 이미지를 다운받아온 레파지토리 이름. 
+- `latest` : 태그. 대개 버전을 의미함
+- `-t ` : 터미널 같은 역할을 하는 화면을 띄워주는 옵션
+- `-p` : 포트포워딩 옵션
+  - 9000:8080 은 이미지가 갖고있는 포트번호가 8080번이고, 외부에서 9000번 포트번호로 접속하면 이 8080포트로 포트포워딩 시켜준다는 것을 의미한다.  성공적으로 서버가 실행되면 아래와 같이 `localhost:9000` 으로 접속했을 때 Hello Docker가 출력된다![img](https://lh5.googleusercontent.com/OrbvZaffYeJdbfzzhediP_1UNNfsvgfFwL5pBGs7ObX7eeEQM5TMnFCJ_oVh67FN9vK7c5Ykr7-IoGmvxqwxk4hOL8ApMCKzF_WG6YjKey6M37U783nHUeBqYK9NXFwtruGCsSSd)
+
+
+
+### Dockerfile
+
+Dockerfile는 Docker이미지 설정 파일이다. 
+
+- FROM
+- RUN
+- COPY
+- CMD
+>>>>>>> refs/remotes/origin/master
 
 
 
