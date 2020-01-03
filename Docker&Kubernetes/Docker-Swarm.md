@@ -408,6 +408,12 @@ u558rys6d9g9        echo.6              registry:5000/example/echo:latest   8690
 
 
 
+
+
+------
+
+### Docker Visualizer
+
 - visualizer를 사용해 컨테이너 배치 시각화하기(stack으로 배포할 것임)
   - [docker_hub의 swarm visualizer](https://hub.docker.com/r/dockersamples/visualizer)
 
@@ -450,3 +456,106 @@ u558rys6d9g9        echo.6              registry:5000/example/echo:latest   8690
 
 ![image-20200103134331904](images/image-20200103134331904.png)
 
+
+
+
+
+------
+
+### Docker HAProxy
+
+- HAProxy : 외부 호스트에서 요청되는 트래픽을 목적 서비스로 보내주는 프록시 서버 설정
+
+  - 프록시 역할 : 내부에서 밖으로 나가는 것을 중간에 지키고 허용된 사이트면 보내주고 허용되지 않은 사이트는 차단해버림
+
+- `dockercloud/haproxy` 이미지로 배포  &#10132;  *Dockerfile* 을 만든다는 의미
+
+  - 컨테이너 외부에서 서비스에 접근할 수 있도록 해 주는 다리 역할(*ingress*)
+  - 서비스가 배치된 노드에 로드 밸런싱 기능 제공
+
+- stack 폴더에 `ch03-ingress.yml` 파일 생성
+
+- ```yaml
+  version: "3"
+  services:
+      haproxy:
+          image: dockercloud/haproxy            
+          volumes:
+              - /var/run/docker.sock:/var/run/docker.sock
+          deploy:
+              mode: global
+              placement:
+                  constraints:
+                      - node.role == manager        
+          ports:
+              - 80:80
+              - 1936:1936
+          networks:
+              - ch03
+      
+  networks:
+      ch03:
+          external: true   # 외부에서도 접속 가능
+  ```
+
+- `ch03-webapi.yml` 파일 수정 - `service port` 추가
+
+  ```yaml
+  version: "3"
+  services:
+      nginx:
+          image: gihyodocker/nginx-proxy            
+          deploy:
+              replicas: 3 # 하나의 컨테이너에 서비스가 3개 복제된다는 의미. 
+              placement: 
+                  constraints: [node.role!=manager] # 현재 manager 1개, worker가 3개 이므로 worker에만 설치 해야한다
+          environment:
+              SERVICE_PORTS: 80 # 서비스 포트를 추가
+              BACKEND_HOST: echo_api:8080 # 변수로 사용되는 값이므로 고정값이 아니다. echo가 가지고 있는 것 중 api를 의미함
+          depends_on:
+              - api
+          networks:
+              - ch03
+      api:
+          image: registry:5000/example/echo:latest
+          deploy:
+              replicas: 3
+              placement:  
+                  constraints: [node.role!=manager] # manager에는 설치하지 말라는 제약조건 
+          networks:
+              - ch03
+  networks:
+      ch03:
+          external: true   # 외부에서도 접속 가능
+  ```
+
+- 2개의 파일 모두 배포
+
+  - `ch03-webap.yml` 배포 -> `echo` 라는 이름
+
+    ```powershell
+    / # docker stack deploy -c /stack/ch03-webapi.yml echo
+    Updating service echo_api (id: pf99tpw98sdtmyth2i9tmalah)
+    Updating service echo_nginx (id: iffv6qraxt9z8jque7510cucm)
+    ```
+
+  - `ch03-ingress.yml` 배포 -> `ingress` 라는 이름
+
+    ```powershell
+    / # docker stack deploy -c /stack/ch03-ingress.yml ingress
+    Creating service ingress_haproxy
+    ```
+
+  - `docker stack ls` 로 확인
+
+    ```powershell
+    / # docker stack ls
+    NAME                SERVICES            ORCHESTRATOR
+    echo                2                   Swarm
+    ingress             1                   Swarm
+    visualizer          1                   Swarm
+    ```
+
+  - `docker service ls` 로 서비스 확인
+
+![image-20200103144323186](images/image-20200103144323186.png)
