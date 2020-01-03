@@ -93,18 +93,76 @@ dgj73fc7bqbv        todo_mysql_master   replicated          1/1                 
 scqvahvn1jdo        todo_mysql_slave    replicated          0/2                 registry:5000/ch04/tododb:latest
 ```
 
-*문제 :slave의 replicas가 올라오지 않음 : cnf 파일과 sh 파일을 CRLF에서 LF로 바꿈*
+*문제 : slave의 replicas가 올라오지 않음*
 
-- *Dockerfile* 의 CMD부분을 주석처리하고 새로 빌드
+*--> 해결 : cnf 파일과 sh 파일을 CRLF에서 LF로 바꿈*
+
+- **기존에 만들었던 `image`,  `swarm`, `stack` 전부 지우고 새로 깔자 ** 
+
+  - create network
+
+    ```powershell
+    PS C:\Users\HPE> docker container exec -it manager sh
+    / # docker network create --driver=overlay --attachable todoapp
+    ```
+
+  - `manager`와 `worker`  `join`시키기
+
+    - `manager`에서 토큰 발급
+
+    ```powershell
+    PS C:\Users\HPE> docker exec -it manager docker swarm init
+    Swarm initialized: current node (pq0qlz0lliwn86ntarzm7kd8m) is now a manager.
+    
+    To add a worker to this swarm, run the following command:
+    
+       docker swarm join --token SWMTKN-1-1rl2nengjgp71bhjmbr1sw9jdczz415uk13afo53ymweup1a9n-cjfndrl3ylib0mq6axwm33vts 172.22.0.3:2377
+    
+    To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+    ```
+
+    - `worker01`부터 `worker03`까지 `swarm join` 반복 실행
+
+    ```powershell
+    # worker01
+    PS C:\Users\HPE> docker exec -it worker01 sh
+    / # docker swarm join --token SWMTKN-1-1rl2nengjgp71bhjmbr1sw9jdczz415uk13afo53ymweup1a9n-cjfndrl3ylib0mq6axwm33vts 172.22.0.3:2377
+    This node joined a swarm as a worker.
+    
+    # worker02
+    PS C:\Users\HPE> docker exec -it worker02 sh
+    / # docker swarm join --token SWMTKN-1-1rl2nengjgp71bhjmbr1sw9jdczz415uk13afo53ymweup1a9n-cjfndrl3ylib0mq6axwm33vts 172.22.0.3:2377
+    This node joined a swarm as a worker.
+    
+    
+    # worker03
+    PS C:\Users\HPE> docker exec -it worker03 sh
+    / # docker swarm join --token SWMTKN-1-1rl2nengjgp71bhjmbr1sw9jdczz415uk13afo53ymweup1a9n-cjfndrl3ylib0mq6axwm33vts 172.22.0.3:2377
+    This node joined a swarm as a worker.
+    ```
+
+  - *Dockerfile*빌드 해서 `ch04/tododb:latest` 라는 이름의 이미지 등록
+
+    - `docker image build -t ch04/tododb:latest .` 
+
+  - `localhost:5000/ch04/tododb:latest` 태그 붙여서(`tag` 옵션) 레지스트리 등록(`push`옵션)
+
+    - `docker image tag ch04/tododb:latest localhost:5000/ch04/tododb:latest`
+    - `docker image push localhost:5000/ch04/tododb:latest`
+
+  - 스웜으로 배포하기
+
+    ```pow
+    / # docker stack deploy -c /stack/todo-mysql.yml todo_mysql
+    Creating service todo_mysql_master
+    Creating service todo_mysql_slave
+    ```
+
+    
+
+  - `docker service ls`로 확인
+ ![image-20200103184635023](images/image-20200103184635023.png)
 
 
-
-
-
-
-
-   
-
-- worker01로 접속 : `PS C:\Users\HPE\Work\docker\day03\swarm\todo\tododb> docker exec -it worker01 sh`
-- 만들었던 이미지를 다운받아 오자
-  - `docker pull registry:5000/ch04/tododb:latest`
+- `docker visualizer`에서 확인
+ ![image-20200103183040886](images/image-20200103183040886.png)
