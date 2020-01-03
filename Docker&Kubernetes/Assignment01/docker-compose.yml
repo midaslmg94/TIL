@@ -1,0 +1,6 @@
+version: "3"
+services:
+    my_sql: 
+        image: test_mysql
+        container_name: test_mysql # 컨테이너 이름
+        
