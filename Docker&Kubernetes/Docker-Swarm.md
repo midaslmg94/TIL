@@ -385,7 +385,7 @@ u558rys6d9g9        echo.6              registry:5000/example/echo:latest   8690
 
 - stack이 잘 만들어졌는지 확인 :  `docker stack ls`
 
-  ```bash
+  ```shell
   / # docker stack ls
   NAME                SERVICES            ORCHESTRATOR
   echo                2                   Swarm
@@ -393,7 +393,7 @@ u558rys6d9g9        echo.6              registry:5000/example/echo:latest   8690
 
   - SERVICES는 `nginx`,`api` 2가지
 
-- 좀 더 자세하게 확인 :  `docker sgtack services echo`
+- 좀 더 자세하게 확인 :  `docker stack services echo`
 
   ```bash
   / # docker stack services echo
@@ -402,5 +402,51 @@ u558rys6d9g9        echo.6              registry:5000/example/echo:latest   8690
   pf99tpw98sdt        echo_api            replicated          3/3                 registry:5000/example/echo:latest
   ```
 
+- 복제되어있는 서비스 확인 : `docker stack ps echo`
+
+![image-20200103132307090](images/image-20200103132307090.png)
+
+
+
+- visualizer를 사용해 컨테이너 배치 시각화하기(stack으로 배포할 것임)
+  - [docker_hub의 swarm visualizer](https://hub.docker.com/r/dockersamples/visualizer)
+
+- visualizer.yml 파일 생성
+
+  ```yaml
+  version: "3"
   
+  services:
+      app:
+          image: dockersamples/visualizer
+          ports:
+              - "9000:8080"
+          volumes:
+              - /var/run/docker.sock:/var/run/docker.sock
+          deploy:
+              mode: global
+              placement:
+                  constraints: [node.role == manager]
+  ```
+
+- visualizer stack 배포
+
+  - `docker exec -it manager docker stack deploy -c /stack/visualizer.yml visualizer`
+
+- 현재 실행중인 서비스 확인
+
+  ```powershell
+  / # docker service ls
+  ID                  NAME                MODE                REPLICAS            IMAGE                               PORTS
+  pf99tpw98sdt        echo_api            replicated          3/3                 registry:5000/example/echo:latest
+  iffv6qraxt9z        echo_nginx          replicated          3/3                 gihyodocker/nginx-proxy:latest
+  tvf7y0wlwz0b        visualizer_app      global              1/1                 dockersamples/visualizer:latest     *:9000->8080/tcp
+  ```
+
+  - 1개의 매니저, 3개의 worker
+    - constraint 조건으로 visualizer는 manager에만 배치, echo_api와 echo_nginx는 worker에만 배치
+
+- visualizer 확인 - `localhost:9000`
+
+![image-20200103134331904](images/image-20200103134331904.png)
 
