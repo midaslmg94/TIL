@@ -111,7 +111,8 @@ services:
     ```
 
     - `docker`명령어가 2번 나온다. `docker swarm init` 이라는 명령어를 `manager`에게 전달한다는 의미
-
+  - `docker exec -it manager`를 먼저 실행해서 `manager`로 들어간 상태에서 `docker swarm init`를 하는 것과 같다.
+    
   - manager 의 ps 확인
 
     ```bash
@@ -171,7 +172,7 @@ k2fzc718ymgz8ggigoijvuaf9     f53f0c9b3c78        Ready               Active    
 
 
 
-### 200103 Docker Swarm 2일차
+### 200103 금요일 Docker Swarm 2일차
 
 - Manager에 Swarm 설정
 
@@ -201,14 +202,14 @@ k2fzc718ymgz8ggigoijvuaf9     f53f0c9b3c78        Ready               Active    
 - 도커 레지스트리용 이미지 등록
 
   - `docker push localhost:5000/example/echo:latest`
-  - localhost:5000/v2/_catalog 접속
+  - `localhost:5000/v2/_catalog` 접속
   - ![image-20200103100227807](images/image-20200103100227807.png)
 
 - 이렇게 하면 `docker pull registry:5000/example/echo` 로 이미지를 다운받아 올 수 있다.
 
 - worker 컨테이너에 이미지 설치
 
-  - worker01로 shell에 접속하여 레지스트리용 이미지 `localhost:5000/example/echo:latest` 받아오기
+  - `worker01`로 shell에 접속하여 레지스트리용 이미지 `localhost:5000/example/echo:latest` 받아오기
 
   ```bash
   PS C:\Users\HPE> docker exec -it worker01 sh
@@ -221,7 +222,7 @@ k2fzc718ymgz8ggigoijvuaf9     f53f0c9b3c78        Ready               Active    
   PS C:\Users\HPE> docker exec -it worker01 docker pull registry:5000/example/echo:latest
   ```
 
-  - worker02, 03도 마찬가지로 가능하다.
+  - `worker02, 03`도 마찬가지로 가능하다.
 
     
 
@@ -237,10 +238,9 @@ k2fzc718ymgz8ggigoijvuaf9     f53f0c9b3c78        Ready               Active    
   / # docker swarm leave --force
   ```
 
-- 스웜 초기화&토큰 발급
+- 스웜 초기화&토큰 발급 --> `swarm init`을 하면 `manager`역할을 하게 된다
 
   ```bash
-  
   / # docker swarm init
   Swarm initialized: current node (uswlpjty9bzngnundrn11kggr) is now a manager.
   
@@ -248,7 +248,7 @@ k2fzc718ymgz8ggigoijvuaf9     f53f0c9b3c78        Ready               Active    
   
       docker swarm join --token SWMTKN-1-0xj2p45gd0xtxft3w6c74hn2rmww8zy9okzbo1fdj1uqcxu4ac-a4wbzy2urfr7byosk7zezr5go 172.21.0.3:2377
   ```
-
+  
 - worker01에 접속, 기존 swarm 삭제, 새롭게 발급된 토큰으로 join
 
   ```bash
@@ -260,6 +260,19 @@ k2fzc718ymgz8ggigoijvuaf9     f53f0c9b3c78        Ready               Active    
   ```
 
   - worker02와 03도 똑같이 해준다.
+
+- `manager`에서 `docker node ls`로 확인 - `docker host`들을 확인
+
+```powershell
+/ # docker node ls
+ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+d8olw48bg675qdx2aryt4fbf8     36a04a6853cc        Ready               Active                                  19.03.5
+nku0213jtsq4qxpoegztxz5j9     1730ee93d7bd        Ready               Active                                  19.03.5
+nj0mqnu4icup378ihqsqazj5v     84373f5bc629        Ready               Active                                  19.03.5
+zbzfrg3jwjzy21opaf5eoq09z *   cca49be4ad71        Ready               Active              Leader              19.03.5
+```
+
+
 
 
 
@@ -345,7 +358,7 @@ u558rys6d9g9        echo.6              registry:5000/example/echo:latest   8690
 - 여러 서비스를 함께 다룰 수 있음
 - 스택을 사용해 배포된 서비스 그룹은 overlay 네트워크에 속함
 - 스택 A1과 A2를 overlay로 묶어주면 서로 사용 가능
-- 네트워크 생성, stack.yml 파일을 만들어준다.
+- 네트워크 생성, `stack.yml` 파일을 만들어준다.
 
 ##### overlaynetwork 생성
 
@@ -415,8 +428,9 @@ u558rys6d9g9        echo.6              registry:5000/example/echo:latest   8690
 ### Docker Visualizer
 
 - visualizer를 사용해 컨테이너 배치 시각화하기(stack으로 배포할 것임)
-  - [docker_hub의 swarm visualizer](https://hub.docker.com/r/dockersamples/visualizer)
-
+  
+- [docker_hub의 swarm visualizer](https://hub.docker.com/r/dockersamples/visualizer)
+  
 - visualizer.yml 파일 생성
 
   ```yaml

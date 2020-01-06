@@ -59,7 +59,7 @@
 
 - 이미지 생성
 
-  - 폴더를 `C:\Users\HPE\Work\docker\day03\swarm\todo\tododb`로 이동한다.
+  - 폴더를 `C:\Users\HPE\Work\docker\day03\swarm\todo\tododb`로 이동한다.(`Dockerfile`이 있는 위치)
   - 빌드 실행 : `docker build -t ch04/tododb:latest .`
 
   
@@ -150,6 +150,13 @@ scqvahvn1jdo        todo_mysql_slave    replicated          0/2                 
     - `docker image tag ch04/tododb:latest localhost:5000/ch04/tododb:latest`
     - `docker image push localhost:5000/ch04/tododb:latest`
 
+  - `Registry`의 이미지 목록은 `localhost:5000/v2/_catalog` 에서 확인가능
+  ![image-20200103165144134](images/image-20200103165144134.png)
+    
+  - MySQL을 사용할 수 있는 이미지 준비 완료
+
+    
+    
   - 스웜으로 배포하기
 
     ```pow
@@ -161,8 +168,232 @@ scqvahvn1jdo        todo_mysql_slave    replicated          0/2                 
     
 
   - `docker service ls`로 확인
- ![image-20200103184635023](images/image-20200103184635023.png)
+   ![image-20200103184635023](images/image-20200103184635023.png)
 
 
-- `docker visualizer`에서 확인
+- `docker visualizer`에서 확인(localhost:9000)
  ![image-20200103183040886](images/image-20200103183040886.png)
+
+------
+
+
+
+### 200106 월요일 Docker Swarm 3일차
+
+- `worker`중 하나인 `84373f5bc629`에 접속해보자
+
+  ```powershell
+  PS C:\Users\HPE> docker exec -it 84373f5bc629 sh
+  / # docker ps
+  CONTAINER ID        IMAGE                              COMMAND                  CREATED             STATUS              PORTS                 NAMES
+  c0c5fe0f861a        registry:5000/ch04/tododb:latest   "prehook add-server-…"   2 days ago          Up 2 days           3306/tcp, 33060/tcp   todo_mysql_slave.2.chhnap36beyh7lzxm9aa7ym95
+  ```
+
+  - my_sql DB가 설치되어있다
+
+- 각 Node 별 Service(Container) 배치 구조 및 Port 현황(`nginx`까지 구축한 상태)
+
+![image-20200106170056875](images/image-20200106170056875.png)
+
+
+
+- 현재 master역할을 하는 worker인 `36a04a6853cc`에 접속
+
+  - manager로 들어간 shell에서 `docker service ls`를 해보면 master를 가지고 있는 worker01의 서비스들이 보인다. 
+
+    ```powershell
+    / # docker service ls
+    ID                  NAME                MODE                REPLICAS            IMAGE                              PORTS
+    2gv9nhhexupw        todo_mysql_master   replicated          1/1                 registry:5000/ch04/tododb:latest
+    ml8lnf6v6bb1        todo_mysql_slave    replicated          2/2                 registry:5000/ch04/tododb:latest
+    2ftpe44dltmn        visualizer_app      global              1/1                 dockersamples/visualizer:latest    *:9000->8080/tcp
+    ```
+
+  - `master`의 ID가 `2gv9nhhexupw`이다. 이것의 컨테이너 상태를 봐보자
+
+    ```powershell
+    / # docker service ps 2gv9nhhexupw
+    ID                  NAME                  IMAGE                              NODE                DESIRED STATE       CURRENT STATE        ERROR               PORTS
+    8co1wbfmity6        todo_mysql_master.1   registry:5000/ch04/tododb:latest   36a04a6853cc        Running             Running 2 days ago
+    ```
+
+  - 새로운 창에서 master 컨테이너인 `8co1wbfmity6`로 들어가보자
+
+
+
+
+
+
+
+
+
+
+
+- 표준 출력(책 146p) : `docker exec -it 36a04a6853cc docker exec -it todo_mysql_master.1.8co1wbfmity6950di4blt96dr bash`
+  - 윈도우에서 실행
+
+  ```powershell
+  PS C:\Users\HPE> docker exec -it 36a04a6853cc docker exec -it todo_mysql_master.1.8co1wbfmity6950di4blt96dr bash
+  root@96362baac25e:/# docker ps
+  ```
+
+
+
+- `master`에 접속
+
+  ```powershell
+  PS C:\Users\HPE> docker exec -it manager docker service ps todo_mysql_master --no-trunc --filter "desired-state=running" --format "docker exec -it {{.Node}} docker exec -it {{.Name}}.{{.ID}} bash"
+  
+  #위의 표준출력을 실행했을 때 나오는 문장 
+  docker exec -it 36a04a6853cc docker exec -it todo_mysql_master.1.8co1wbfmity6950di4blt96dr bash
+  
+  # 그대로 복붙해서 실행시키면 master로 TODODB 접속을 할 수 있다.
+  PS C:\Users\HPE> docker exec -it 36a04a6853cc docker exec -it todo_mysql_master.1.8co1wbfmity6950di4blt96dr bash
+  ```
+
+  - `todo_mysql_master`에 접속
+
+    ```powershell
+    root@96362baac25e:/# ls -al /usr/local/bin
+    total 11648
+    drwxrwsr-x 1 root staff    4096 Jan  3 09:08 .
+    drwxrwsr-x 1 root staff    4096 Dec 24 00:00 ..
+    -rwxr-xr-x 1 root root      185 Jan  3 08:54 add-server-id.sh
+    lrwxrwxrwx 1 root staff       8 Jan  3 09:08 codep -> entrykit
+    -rwxrwxr-x 1 root root    12715 Dec 28 23:00 docker-entrypoint.sh
+    -rwxr-xr-x 1 root root  9191600 Jan 21  2016 entrykit
+    -rwxr-xr-x 1 root staff 2698808 May 21  2017 gosu
+    -rwxr-xr-x 1 root root      130 Jan  3 08:53 init-data.sh
+    lrwxrwxrwx 1 root staff       8 Jan  3 09:08 prehook -> entrykit
+    lrwxrwxrwx 1 root staff       8 Jan  3 09:08 render -> entrykit
+    lrwxrwxrwx 1 root staff       8 Jan  3 09:08 switch -> entrykit
+    ```
+
+  - `root@96362baac25e:/# init-data.sh` 실행
+
+  - `root@96362baac25e:/# mysql -ugihyo -p tododb` 접속 `pw : gihyo`
+
+    ```powershell
+    mysql> show databases;
+    +--------------------+
+    | Database           |
+    +--------------------+
+    | information_schema |
+    | tododb             |
+    +--------------------+
+    ```
+
+    - 
+
+- `slave`에 접속
+
+  ```powershell
+  # master에 접속하는것과 동일하지만 todo_mysql_slave 라는 점이 다르다
+  PS C:\Users\HPE> docker exec -it manager docker service ps todo_mysql_slave --no-trunc --filter "desired-state=running" --format "docker exec -it {{.Node}} docker exec -it {{.Name}}.{{.ID}} bash"
+  
+  # 위의 표준출력을 실행했을 때 나오는 문장 : slave가 2개 있으므로 2개나옴
+  docker exec -it 1730ee93d7bd docker exec -it todo_mysql_slave.1.dm87ap9zzh9k569hsb6p2annr bash
+  docker exec -it 84373f5bc629 docker exec -it todo_mysql_slave.2.chhnap36beyh7lzxm9aa7ym95 bash
+  
+  # slave중 하나로 접속하자
+  PS C:\Users\HPE> docker exec -it 1730ee93d7bd docker exec -it todo_mysql_slave.1.dm87ap9zzh9k569hsb6p2annr bash
+  
+  ```
+
+  - `todo_mysql_slave`에 접속
+
+    ```powershell
+    root@d8327ccab3b4:/# ls -al /usr/local/bin
+    total 11648
+    drwxrwsr-x 1 root staff    4096 Jan  3 09:08 .
+    drwxrwsr-x 1 root staff    4096 Dec 24 00:00 ..
+    -rwxr-xr-x 1 root root      185 Jan  3 08:54 add-server-id.sh
+    lrwxrwxrwx 1 root staff       8 Jan  3 09:08 codep -> entrykit
+    -rwxrwxr-x 1 root root    12715 Dec 28 23:00 docker-entrypoint.sh
+    -rwxr-xr-x 1 root root  9191600 Jan 21  2016 entrykit
+    -rwxr-xr-x 1 root staff 2698808 May 21  2017 gosu
+    -rwxr-xr-x 1 root root      130 Jan  3 08:53 init-data.sh
+    lrwxrwxrwx 1 root staff       8 Jan  3 09:08 prehook -> entrykit
+    lrwxrwxrwx 1 root staff       8 Jan  3 09:08 render -> entrykit
+    lrwxrwxrwx 1 root staff       8 Jan  3 09:08 switch -> entrykit
+    ```
+
+  - `root@d8327ccab3b4:/# init-data.sh` 실행
+
+  - `root@d8327ccab3b4:/# mysql -ugihyo -p tododb` 실행
+
+    ```powershell
+    mysql> show databases;
+    +--------------------+
+    | Database           |
+    +--------------------+
+    | information_schema |
+    | tododb             |
+    +--------------------+
+    ```
+
+    - 
+
+- 포트번호를 쉽게 확인할 수 있도록 worker01의 master node에 들어가서 `apt-get install -y net-tools`를 설치해주자
+- 각 노드별 ip, port 번호 확인(visualizer로 현재 상태 확인)
+
+![image-20200106153357441](images/image-20200106153357441.png)
+
+
+
+- 우선 Worker01(1730ee93d7bd) 노드로 들어가서 실행중인 서비스(컨테이너)가 어떤 것인지 확인
+
+```powershell
+PS C:\Users\HPE\Work\docker\day03\swarm\todo\todoapi> docker exec -it worker01 sh
+
+
+```
+
+- `Worker01`의 서비스 확인
+
+  ```powershell
+  / # docker ps
+  CONTAINER ID        IMAGE                               COMMAND                  CREATED             STATUS              PORTS                 NAMES
+  c1097b718d21        registry:5000/ch04/todoapi:latest   "todoapi"                26 minutes ago      Up 26 minutes                             todo_app_api.2.75mtrqrxywptguzpcgj73v0sf
+  d8327ccab3b4        registry:5000/ch04/tododb:latest    "prehook add-server-…"   2 days ago          Up 2 days           3306/tcp, 33060/tcp   todo_mysql_slave.1.dm87ap9zzh9k569hsb6p2annr
+  ```
+
+  - visualizer에서 볼 수 있듯이, todo_app_api와 todo_mysql_slave가 실행되고 있다. 우선 todo_app_api(c1097b718d21)로 들어가보자
+
+- `todo_app_api` 접속 후 ip 확인
+
+- ```powershell
+  / # docker exec -it c1097b718d21 bash
+  root@c1097b718d21:/# hostname -i
+  10.0.2.11
+  root@c1097b718d21:/#
+  ```
+
+- `todo_app_api` 접속 후 port 확인
+
+- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- ```powershell
+  PS C:\Users\HPE> docker exec -it worker02 sh
+  / # docker ps
+  CONTAINER ID        IMAGE                              COMMAND                  CREATED             STATUS              PORTS                 NAMES
+  c0c5fe0f861a        registry:5000/ch04/tododb:latest   "prehook add-server-…"   2 days ago          Up 2 days           3306/tcp, 33060/tcp   todo_mysql_slave.2.chhnap36beyh7lzxm9aa7ym95
+  / # docker exec -it c0c5 mysql -ugihyo -p tododb
+  Enter password:
+  ```
+
+- 
