@@ -1,0 +1,74 @@
+# requirements
+# - We create a stack and services, you need to create a yaml file like
+# todo_app.yml
+# - volume x 1 (db-data,target=/var/lib/postgresql/data)
+# - networks x 2 (frontend, backend)
+# - services x 5 (voting-app, redis, db, worker, result-app)
+# - stack x 1 (my-vote-app)
+
+version: "3"
+networks:
+    frontend:
+        driver: overlay
+        external: true
+    backend:
+        driver: overlay
+        external: true
+services:
+    db:
+        image: postgres:9.4
+        deploy: 
+            placement:
+                constraints: [node.role != manager]
+        networks:
+            - backend
+        volumes:
+            - db-data:/var/lib/postgresql/data
+    
+    
+    result-app:
+        image: bretfisher/examplevotingapp_result
+        deploy:
+            placement:
+                constraints: [node.hostname == work02]
+        ports:
+            - 5001:80
+        depends_on:
+            - db
+        networks:
+            - backend
+
+    redis:
+        image: redis:3.2
+        deploy:
+            placement:
+                constraints: [node.hostname != manager]             
+        networks:
+            - frontend
+    
+    worker:
+        image: bretfisher/examplevotingapp_worker:java
+        deploy:
+            placement:
+                constraints: [node.hostname != manager]
+        depends_on:
+            - redis
+        networks:
+            - frontend
+            - backend
+
+
+    voting-app:
+        image: bretfisher/examplevotingapp_vote
+        ports:
+            - 8000:80        
+        deploy:
+            placement:
+                constraints: [node.hostname == work01]
+        depends_on:
+            - worker
+        networks:
+            - frontend
+volumes:
+    db-data:
+    
