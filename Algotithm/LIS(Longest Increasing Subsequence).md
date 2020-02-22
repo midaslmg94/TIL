@@ -20,38 +20,76 @@
 
     
 
-- 시간복잡도
+ - 방법 1 : 이중 for-loop 
 
-  - O(n^2) --- 1번 방법
+     - 시간복잡도 : O(n^2)
+     - dp 배열은 i 번째 원소가 가질 수 있는 최대증가수열의 길이를 뜻한다.
 
-  - O(nlogn) --- 2번 방법
-
-    
-
-- 1번 방법
+     - 수열 A = {10, 20, 10, 30, 20, 50} 인 경우 dp[4]는 3이다. {**10**, **20**, 10, **30**, 20 ...} 
+     - n이 10,000을 넘어가면 시간초과가 발생할 수 있다.
 
   ```c++
-  int[] array = new int[N]; // 인덱스마다 각 입력값
-  int[] dp = new int[N]; // 인덱스마다 각 증가 수열의 길이
-  int max = 0;
-  dp[0] = 1;
-  for(int i=1;i<N;i++) {
-      dp[i] = 1;
-      // i 를 기준으로 인덱스 0 에서부터 i-1까지 체크한다 
-      // 길이를 기준
-      for(int j=0;j<i;j++) {
-          if (array[i] > array[j] && dp[j] + 1 > dp[i]) {
-              // 증가 수열
-              dp[i] = dp[j] + 1;
-          }
-      }
-      if (max < dp[i]) {
-          max = dp[i];
-      }
-  }
+ int arr[MAX]; // 인덱스마다 각 입력값
+ int dp[MAX]; // 인덱스마다 각 증가 수열의 길이
+ int max = 0;
+ dp[0] = 1;
+ for(int i=1;i<N;i++) {
+    dp[i] = 1;
+    // i 를 기준으로 인덱스 0 에서부터 i-1까지 체크한다 
+    // 길이를 기준
+     for(int j=0;j<i;j++) {
+         if (arr[i] > arr[j] && dp[j] + 1 > dp[i]) {
+             // 증가 수열
+             dp[i] = dp[j] + 1;
+         }
+     }
+     if (max < dp[i]) {
+         max = dp[i];
+     }
+ }
   ```
 
-  
 
-  - dp 배열은 i 번째 원소가 가질 수 있는 최대증가수열의 길이를 뜻한다.
-  - 수열 A = {10, 20, 10, 30, 20, 50} 인 경우 dp[4]는 3이다. {**10**, **20**, 10, **30**, 20 ...} 
+
+- 방법 2 : 이분 탐색
+
+  - 시간복잡도 : O(nlogn)
+
+  - 배열 마지막 요소보다 새로 들어오는 수가 크다면, 배열에 넣는다.
+
+  - 그렇지 않다면, 그 수가 들어갈 자리에 들어가 있는 값을 교체한다(`lower_bound` 로 들어갈 자리를 찾음)
+
+    >  `lower_bound ` : 주어진 값보다 작지 않은(같거나 큰) 첫번째 원소의 `iterator`를 반환
+
+  - dp 벡터의 사이즈가 LIS가 된다
+
+  - 단점 : 정답밖에 모른다. 경로를 역추적 할 수 없다.
+
+```c++
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#define MAX 1000
+using namespace std;
+int arr[MAX];
+vector<int>v_dp;
+int main() {
+	int n;
+	cin >> n;
+	for (int i = 0; i < n; i++) {
+		cin >> arr[i];
+	}
+	v_dp.push_back(arr[0]);
+	for (int i = 1; i < n; i++) {
+		if (v_dp.back() < arr[i]) {//더 큰 값이 들어옴
+			v_dp.push_back(arr[i]);
+		}
+		else {// 더 작은 값이 들어옴 
+			auto pos = lower_bound(v_dp.begin(), v_dp.end(),arr[i]);
+			*pos = arr[i];
+		}
+	}
+	cout << v_dp.size();
+}
+```
+
