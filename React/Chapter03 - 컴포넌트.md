@@ -212,4 +212,4 @@ export default Say;
 
 
 
-- `state`의 값을 바꾸어야 할 때는 `setState()` 또는 `useState()`를 통해 전달받은  `setter`함수를 사용해야한다.
+- `state`의 값을 바꾸어야 할 때는 `setState()` 또는 `useState()`를 통해 전달받은  `setter`함수를 사용해야한다. 
