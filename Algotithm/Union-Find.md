@@ -84,14 +84,10 @@
   		int cur_cost = graph[i].first;
   		int home1 = min(graph[i].second.first, graph[i].second.second);
   		int home2 = max(graph[i].second.first, graph[i].second.second);
-  		if (findParent(home1) != findParent(home2)) { // 부모가 다른 애들만, 합침!!!!	이걸 넣어야 시간초과가 안난다.
+  		if (findParent(home1) != findParent(home2)) { // 부모가 다른 애들만, 합침!!!!	
   			mergeParent(home1, home2);
-  			/*result += cur_cost; // 문제마다 다른 조건들
-  			cnt++;*/ 
-  		}
-  		if (cnt == n - 2) { break; } // 문제마다 다른 조건들 
+  		}		
   	}
-  	cout << result;
   }
   ```
   
