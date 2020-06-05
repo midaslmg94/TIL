@@ -148,7 +148,7 @@ from test1 join test2 on test1.number = test2.number;
   ```mysql
   select distinct c.cart_id
   from cart_products c inner join cart_products p on(c.cart_id=p.cart_id)
-  where (c.name='우유' and p.name='요거트')or(c.name='요거트'and p.name='우유')
+  where (c.name='우유' and p.name='요거트') or (c.name='요거트'and p.name='우유')
   order by c.cart_id;
   ```
 
@@ -163,9 +163,9 @@ select test1.number
 from test1 left join test2 on test1.number = test2.number;
 ```
 
-\- 결과 : 3 2 1
+- 결과 : 3 2 1
 
-\- test1(왼) 과 test2(오) 의 number 컬럼을 서로 비교하여 중첩되는 값이 존재하면 왼쪽 테이블(test1)의 number 컬럼의 값을 출력한다.
+- test1(왼) 과 test2(오) 의 number 컬럼을 서로 비교하여 중첩되는 값이 존재하면 왼쪽 테이블(test1)의 number 컬럼의 값을 출력한다.
 
 
 

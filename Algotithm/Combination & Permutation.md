@@ -185,3 +185,199 @@
   output
   1 2 3 4
   ```
+
+
+
+### 중복 순열
+
+- 개념 : {1, 2, 3 } 에서 2개를 뽑을 때 일반순열의 경우 { 1, 2 } , {1, 3} , { 2, 1} , {2, 3}, { 3, 1}, {3 , 2} 를 출력할 수 있다.
+
+  하지만 중복순열의 경우, 뽑았던 카드를 또 뽑아도 되는 중복이 허용되기 때문에 결과가
+
+  { 1, 1 } , { 1, 2}, {1, 3}, { 2, 1 } , {2, 2 }... 이런식으로 진행될 것이다.
+
+  ```cpp
+  #include<iostream>
+   
+  #define endl "\n"
+  #define MAX 5
+  using namespace std;
+   
+  int Arr[MAX];
+  int Select[MAX];
+   
+  void DFS(int Cnt)
+  {
+      if (Cnt == 3)
+      {
+          cout << " { ";
+          for (int i = 0; i < 3; i++)
+          {
+              cout << Select[i] << " ";
+          }
+          cout << "} " << endl;
+          return;
+      }
+   
+      for (int i = 0; i < MAX; i++)
+      {
+          Select[Cnt] = Arr[i];
+          DFS(Cnt + 1);
+      }
+  }
+   
+  int main(void)
+  {
+      for (int i = 0; i < MAX; i++) Arr[i] = i + 1;
+      DFS(0);
+  }
+  
+  output 
+   { 1 1 1 } 
+   { 1 1 2 } 
+   { 1 1 3 } 
+   { 1 1 4 } 
+   { 1 1 5 } 
+   { 1 2 1 } 
+   { 1 2 2 } 
+   { 1 2 3 } 
+  	...    
+   { 5 5 1 } 
+   { 5 5 2 } 
+   { 5 5 3 } 
+   { 5 5 4 } 
+   { 5 5 5 } 
+  ```
+
+  
+
+  
+
+### 중복 조합 : 5개중 3개뽑기
+
+```cpp
+#include<iostream>
+ 
+#define endl "\n"
+#define MAX 5
+using namespace std;
+ 
+int Arr[MAX];
+int Select[MAX];
+ 
+void DFS(int Idx, int Cnt)
+{
+    if (Cnt == 3)
+    {
+        cout << " { ";
+        for (int i = 0; i < 3; i++)
+        {
+            cout << Select[i] << " ";
+        }
+        cout << "} " << endl;
+        return;
+    }
+ 
+    for (int i = Idx; i < MAX; i++)
+    {
+        Select[Cnt] = Arr[i];
+        DFS(i, Cnt + 1);
+    }
+}
+ 
+int main(void)
+{
+    for (int i = 0; i < MAX; i++) Arr[i] = i + 1;
+    DFS(0, 0);
+}
+
+
+output
+1 1 1 
+1 1 2 
+1 1 3 
+1 1 4 
+1 1 5 
+1 2 2 
+1 2 3 
+1 2 4 
+1 2 5 
+1 3 3 
+1 3 4 
+1 3 5 
+1 4 4 
+1 4 5 
+1 5 5 
+2 2 2 
+2 2 3 
+2 2 4 
+2 2 5 
+2 3 3 
+2 3 4 
+2 3 5 
+2 4 4 
+2 4 5 
+2 5 5 
+3 3 3 
+3 3 4 
+3 3 5 
+3 4 4 
+3 4 5 
+3 5 5 
+4 4 4 
+4 4 5 
+4 5 5 
+5 5 5 
+```
+
+
+
+### 파스칼 삼각형
+
+```cpp
+#include <iostream>
+
+using namespace std;
+
+int pascal[30][30];
+
+int main() {
+
+    int first,second;
+    cin >>first >>second;
+
+    for(int i=0;i<=first;i++)
+    {
+        for(int j=0;j<=i;j++)
+        {
+            if(j==0 || i ==j )
+            {    
+                pascal[i][j]=1;
+                continue;
+            }
+
+            pascal[i][j] = pascal[i-1][j-1]+pascal[i-1][j];
+
+        }
+    }
+
+    cout<< pascal[first][second];
+
+
+    return 0;
+
+}
+
+
+input
+5 2 
+
+output
+10
+
+
+52 면  5 C 2 가 된다. 
+```
+
+
+
