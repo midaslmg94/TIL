@@ -87,5 +87,4 @@ print(a)
 
 - list 관련 메서드
 
-   ![](list_method.png)
-   
+![](../Python/2020-12-25-03-51-58.png)
