@@ -39,3 +39,8 @@
 
 #### 2021.01.20 수요일
 - [쿠버네티스 강의 수강 및 실습(Pod 관련)](https://paris-in-the-rain.tistory.com/111)
+
+---
+
+#### 2021.01.21 목요일
+- [쿠버네티스 강의 수강 및 실습(Service 관련)](https://paris-in-the-rain.tistory.com/113)
