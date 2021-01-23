@@ -44,3 +44,16 @@
 
 #### 2021.01.21 목요일
 - [쿠버네티스 강의 수강 및 실습(Service 관련)](https://paris-in-the-rain.tistory.com/113)
+
+
+---
+
+#### 2021.01.22 금요일
+- az500 스터디
+- [알고리즘 문제풀이 - BOJ 11659](https://paris-in-the-rain.tistory.com/114)
+- [알고리즘 문제풀이 - BOJ 15565](https://paris-in-the-rain.tistory.com/115)
+
+--- 
+
+#### 2021.01.23 토요일
+- [알고리즘 문제풀이 - BOJ 4358](https://paris-in-the-rain.tistory.com/116)
