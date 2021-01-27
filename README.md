@@ -72,6 +72,8 @@
 --- 
 #### 2021.01.27 수요일
 - [Golang 공부 시작](https://github.com/midaslmg94/GO_Practice)
+  - Go, Goland 설치
+  - Hello World 출력
 
 
 --- 
