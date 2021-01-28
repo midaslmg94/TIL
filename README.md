@@ -70,6 +70,11 @@
 
 
 --- 
+#### 2021.01.27 수요일
+- [Golang 공부 시작](https://github.com/midaslmg94/GO_Practice)
+
+
+--- 
 
 #### 2021.01.28 목요일
 - Jira 서버 구축
