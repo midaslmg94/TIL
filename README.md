@@ -108,3 +108,16 @@
 
 #### 2021.02.06 토요일
 - [알고리즘 문제풀이 - 9376번 탈옥](https://paris-in-the-rain.tistory.com/123?category=819756)
+
+---
+
+#### 2021.02.12 금요일
+- 인프런 쿠버네티스 강의 수강
+  - Namespace, ResourceQuota, LimitRange
+
+
+---
+#### 2021.02.13 토요일
+- 인프런 쿠버네티스 강의 수강 
+  - Replication Controller, ReplicaSet 
+    - Template, Replicas, Selector
