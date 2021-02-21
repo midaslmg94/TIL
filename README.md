@@ -121,3 +121,10 @@
 - 인프런 쿠버네티스 강의 수강 
   - Replication Controller, ReplicaSet 
     - Template, Replicas, Selector
+
+
+
+#### 2021.02.20 토요일
+- [알고리즘 문제풀이 - 2473번 세 용액](https://paris-in-the-rain.tistory.com/132)
+- 인프런 쿠버네티스 강의 수강
+  - Deployment, DaemonSet, Job, CronJob
