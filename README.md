@@ -62,3 +62,8 @@
 #### 2021.01.24 일요일
 - [알고리즘 문제풀이 - BOJ 1747](https://paris-in-the-rain.tistory.com/117)
 - [소수 판별 알고리즘 정리](https://paris-in-the-rain.tistory.com/118?category=842612)
+
+
+#### 2021.01.25 월요일
+- 알고리즘 문제풀이 - BOJ 9372
+
